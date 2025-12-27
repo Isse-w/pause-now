@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Pause Now</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <style>
+    :root{
+      --bg1:#05060b;
+      --bg2:#0b1220;
+      --card: rgba(20, 24, 33, 0.70);
+      --card2: rgba(20, 24, 33, 0.52);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.18);
+      --text:#f4f6fb;
+      --muted: rgba(244,246,251,.74);
+      --muted2: rgba(244,246,251,.58);
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 20%, rgba(167,139,250,.20), transparent 60%),
+        radial-gradient(900px 700px at 80% 30%, rgba(125,211,252,.16), transparent 60%),
+        radial-gradient(900px 700px at 50% 85%, rgba(52,211,153,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .wrap{ width:100%; max-width:560px; }
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--stroke);
+      border-radius: 22px;
+      padding:18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .hidden{ display:none !important; }
+
+    .top-pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      font-size:12px; color: var(--muted);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      margin-bottom:12px;
+      font-weight: 850;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 3px rgba(125,211,252,.14);
+    }
+
+    h1{ font-size: 26px; line-height:1.18; margin:0 0 6px; letter-spacing:-.2px; font-weight: 980; }
+    .sub{ margin:0 0 14px; color: var(--muted); font-size: 13.5px; line-height:1.45; font-weight: 850; }
+
+    .section-title{
+      margin: 14px 0 8px;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      font-weight: 900;
+    }
+
+    .row{ display:flex; gap:10px; }
+    .row + .row{ margin-top:10px; }
+
+    .bigbtn{
+      width:100%;
+      border:0;
+      padding:16px 14px;
+      border-radius: 16px;
+      cursor:pointer;
+      font-weight:980;
+      font-size: 16px;
+      letter-spacing:.2px;
+      color:#061018;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 12px 28px rgba(125,211,252,.18);
+      margin-top:12px;
+    }
+    .bigbtn:active{ transform: scale(.99); }
+
+    .secondary{
+      width:100%;
+      border:1px solid var(--stroke);
+      padding:12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      cursor:pointer;
+      font-weight:950;
+    }
+
+    .footer{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color: var(--muted2);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    /* Start hero */
+    .startHero{
+      padding: 12px 12px 10px;
+      border:1px solid var(--stroke);
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+    }
+    .startHero h1{ font-size:28px; margin:0 0 6px; }
+    .startHero p{ margin:0; color:var(--muted); font-weight:850; }
+
+    /* Purpose cards */
+    .purposeCards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .purposeCard{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding:12px;
+      cursor:pointer;
+      text-align:left;
+    }
+    .purposeCard strong{ display:block; font-weight:980; }
+    .purposeCard small{ display:block; margin-top:4px; color:var(--muted2); font-weight:850; line-height:1.25; }
+    .purposeCard.active{
+      background: rgba(255,255,255,.11);
+      border-color: rgba(255,255,255,.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+    }
+
+    /* Language buttons */
+    .langRow{ display:flex; gap:10px; }
+    .langBtn{
+      flex:1;
+      padding:14px 12px;
+      border-radius:14px;
+      font-weight:980;
+      font-size:15px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      cursor:pointer;
+    }
+    .langBtn.active{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#061018;
+      border-color: transparent;
+      box-shadow: 0 10px 24px rgba(125,211,252,.22);
+    }
+
+    /* Chips (tydligare) */
+    .chips{ display:flex; gap:10px; }
+    .chip{
+      flex:1;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:13px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      text-align:left;
+      transition: transform .06s ease, background .12s ease;
+    }
+    .chip:active{ transform: scale(.99); }
+    .chip strong{
+      display:block;
+      font-size:16px;
+      letter-spacing:.1px;
+      color: var(--text);
+      font-weight: 980;
+    }
+    .chip small{
+      display:block;
+      margin-top:4px;
+      font-size:12.5px;
+      color: rgba(244,246,251,.82);
+      font-weight:900;
+    }
+    .chip.active{
+      background: rgba(255,255,255,.11);
+      border-color: rgba(255,255,255,.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+    }
+
+    .tog{
+      flex:1;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px;
+      border:1px solid var(--stroke);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+    }
+    .tog .left{ display:flex; align-items:center; gap:10px; color: var(--muted); font-weight:950; }
+    .tog .left span.icon{
+      width:26px;height:26px;border-radius:10px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      color: var(--text);
+      font-size:14px;
+    }
+    input[type="checkbox"]{ width:18px;height:18px; accent-color: var(--accent); }
+
+    select{
+      width:100%;
+      color: var(--text) !important;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--stroke);
+      padding: 12px 12px;
+      border-radius: 14px;
+      outline: none;
+      font-weight:950;
+    }
+    select option{ color:#111; background:#fff; }
+
+    .coach{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height:1.35;
+      font-weight: 850;
+    }
+
+    /* Pause screen */
+    .timer{ text-align:center; font-size: 44px; letter-spacing: 1px; font-weight: 990; margin: 10px 0 0; }
+    .guide{ text-align:center; margin: 8px 0 0; color: var(--muted); font-weight:990; }
+    .hint{ text-align:center; margin: 10px 0 0; color: var(--muted2); font-size: 12.5px; line-height:1.35; font-weight: 850; }
+
+    .orbWrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:4px;
+      margin-bottom:6px;
+    }
+    .orb{
+      width:92px;
+      height:92px;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.18), transparent 40%),
+        radial-gradient(circle at 70% 70%, rgba(167,139,250,.18), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(125,211,252,.22), rgba(125,211,252,.08));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      transform: scale(1);
+      transition: transform 1200ms ease-in-out;
+    }
+
+    .choice-grid{ display:grid; grid-template-columns: 1fr; gap:10px; margin-top:12px; }
+    .link{ color: var(--muted); text-decoration: none; font-weight:950; cursor:pointer; }
+    .link:hover{ text-decoration: underline; }
+
+    /* Modals */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index: 1000;
+    }
+    .modal{
+      width:100%;
+      max-width:520px;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--stroke);
+      border-radius: 22px;
+      padding:18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .modalHeader{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .xbtn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      width:40px; height:40px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:980;
+    }
+
+    .list{ margin-top:12px; display:grid; gap:10px; }
+    .item{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding:12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:980;
+    }
+    .item small{ display:block; margin-top:4px; color: var(--muted2); font-weight:850; }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      display:none;
+      z-index: 1200;
+      backdrop-filter: blur(10px);
+      max-width:min(520px, 92vw);
+      font-weight:950;
+      text-align:center;
+    }
+    .toast.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+
+      <!-- START / ONBOARDING -->
+      <div id="screenStart" class="hidden">
+        <div class="top-pill"><span class="dot"></span><span id="startPill">Start</span></div>
+
+        <div class="startHero">
+          <h1 id="startTitle">Välj innan du börjar</h1>
+          <p id="startSub">Sätt syfte, språk och pauslängd. Sen räcker en knapp.</p>
+        </div>
+
+        <div class="section-title" id="startPurposeTitle">Varför vill du pausa?</div>
+        <div class="purposeCards">
+          <button class="purposeCard active" data-action="startPickPurpose" data-purpose="scroll" type="button">
+            <strong id="p_scroll">Scroll</strong><small id="pc_scroll">Skapa ett mellanrum innan du fortsätter.</small>
+          </button>
+          <button class="purposeCard" data-action="startPickPurpose" data-purpose="stress" type="button">
+            <strong id="p_stress">Stress</strong><small id="pc_stress">Lugnare kropp med lång utandning.</small>
+          </button>
+          <button class="purposeCard" data-action="startPickPurpose" data-purpose="adhd" type="button">
+            <strong id="p_adhd">ADHD</strong><small id="pc_adhd">Få en tydlig riktning igen.</small>
+          </button>
+          <button class="purposeCard" data-action="startPickPurpose" data-purpose="school" type="button">
+            <strong id="p_school">Skola</strong><small id="pc_school">Återställ fokus mjukt.</small>
+          </button>
+        </div>
+
+        <div class="section-title" id="startLangTitle">Språk</div>
+        <div class="langRow">
+          <button class="langBtn active" data-action="startPickLang" data-lang="sv" type="button">Svenska</button>
+          <button class="langBtn" data-action="startPickLang" data-lang="en" type="button">English</button>
+        </div>
+
+        <div class="section-title" id="startPauseTitle">Pauslängd</div>
+        <div class="chips" id="startChips">
+          <button class="chip active" data-action="startPickSeconds" data-seconds="30" type="button">
+            <strong>30s</strong><small id="startChip30">Mikropaus</small>
+          </button>
+          <button class="chip" data-action="startPickSeconds" data-seconds="120" type="button">
+            <strong>2 min</strong><small id="startChip120">Standard</small>
+          </button>
+          <button class="chip" data-action="startPickSeconds" data-seconds="300" type="button">
+            <strong>5 min</strong><small id="startChip300">Stark impuls</small>
+          </button>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <div class="tog">
+            <div class="left"><span class="icon">🔊</span><span id="startSoundLbl">Ljud</span></div>
+            <input id="startSoundToggle" data-action="startToggleSound" type="checkbox" />
+          </div>
+          <div class="tog">
+            <div class="left"><span class="icon">🎙️</span><span id="startVoiceLbl">Röst</span></div>
+            <input id="startVoiceToggle" data-action="startToggleVoice" type="checkbox" />
+          </div>
+        </div>
+
+        <div class="section-title" id="startAmbientTitle">Lugnande ljud</div>
+        <select id="startAmbientSelect" data-action="startSetAmbient">
+          <option value="off" selected>Av</option>
+          <option value="rain">Regn</option>
+          <option value="birds">Fåglar</option>
+          <option value="fire">Eld</option>
+        </select>
+
+        <button class="bigbtn" data-action="finishStart" id="startContinueBtn" type="button">Fortsätt</button>
+
+        <div class="footer" style="margin-top:10px;">
+          <span id="startHint">Du kan ändra allt senare.</span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- HOME -->
+      <div id="screenHome" class="hidden">
+        <div class="top-pill"><span class="dot"></span><span id="pillText"></span></div>
+        <h1 id="titleText"></h1>
+        <p class="sub" id="subtitleText"></p>
+
+        <div class="section-title" id="purposeTitle"></div>
+        <div class="row">
+          <button class="secondary" data-action="setPurpose" data-purpose="scroll" type="button" id="homeP_scroll"></button>
+          <button class="secondary" data-action="setPurpose" data-purpose="stress" type="button" id="homeP_stress"></button>
+        </div>
+        <div class="row">
+          <button class="secondary" data-action="setPurpose" data-purpose="adhd" type="button" id="homeP_adhd"></button>
+          <button class="secondary" data-action="setPurpose" data-purpose="school" type="button" id="homeP_school"></button>
+        </div>
+
+        <div class="coach" id="coachText"></div>
+
+        <div class="section-title" id="pauseTitle"></div>
+        <div class="chips" id="pauseChips">
+          <button class="chip" data-action="setSeconds" data-seconds="30" type="button">
+            <strong>30s</strong><small id="chip30Sub"></small>
+          </button>
+          <button class="chip" data-action="setSeconds" data-seconds="120" type="button">
+            <strong>2 min</strong><small id="chip120Sub"></small>
+          </button>
+          <button class="chip" data-action="setSeconds" data-seconds="300" type="button">
+            <strong>5 min</strong><small id="chip300Sub"></small>
+          </button>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="tog">
+            <div class="left"><span class="icon">🔊</span><span id="soundLbl"></span></div>
+            <input id="soundToggle" data-action="toggleSound" type="checkbox" />
+          </div>
+          <div class="tog">
+            <div class="left"><span class="icon">🎙️</span><span id="voiceLbl"></span></div>
+            <input id="voiceToggle" data-action="toggleVoice" type="checkbox" />
+          </div>
+        </div>
+
+        <div class="section-title" id="ambientTitle"></div>
+        <select id="ambientSelect" data-action="setAmbient">
+          <option value="off" selected>Av</option>
+          <option value="rain">Regn</option>
+          <option value="birds">Fåglar</option>
+          <option value="fire">Eld</option>
+        </select>
+
+        <button class="bigbtn" data-action="startPause" id="startBtn" type="button"></button>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="secondary" data-action="openSettings" id="settingsBtn" type="button"></button>
+          <button class="secondary" data-action="openStats" id="statsBtn" type="button"></button>
+        </div>
+
+        <div class="footer">
+          <span id="statsText"></span>
+          <span id="streakText"></span>
+        </div>
+        <div class="footer" style="margin-top:6px;">
+          <span id="offlineText"></span>
+          <a class="link" id="openSettingsLink" data-action="openSettings" href="#"></a>
+        </div>
+      </div>
+
+      <!-- PAUSE -->
+      <div id="screenPause" class="hidden">
+        <div class="top-pill"><span class="dot"></span><span id="pausePill"></span></div>
+
+        <div class="orbWrap"><div class="orb" id="breathOrb"></div></div>
+
+        <div class="timer" id="timerText">00:30</div>
+        <div class="guide" id="breathText"></div>
+        <div class="hint" id="breathHint"></div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="secondary" data-action="stopPause" type="button" id="stopBtn"></button>
+          <button class="secondary" data-action="backHome" type="button" id="backBtn"></button>
+        </div>
+      </div>
+
+      <!-- CHOICE -->
+      <div id="screenChoice" class="hidden">
+        <div class="top-pill"><span class="dot"></span><span id="choicePill"></span></div>
+        <h1 id="choiceTitle" style="font-size:20px; margin:0 0 6px;"></h1>
+        <p class="sub" id="choiceSub" style="margin:0 0 10px;"></p>
+
+        <div class="choice-grid">
+          <button class="secondary" data-action="choiceClose1m" id="close1minBtn" type="button"></button>
+          <button class="secondary" data-action="choiceLimit5m" id="limit5minBtn" type="button"></button>
+          <button class="secondary" data-action="choiceOther" id="otherBtn" type="button"></button>
+        </div>
+
+        <button class="bigbtn" data-action="backHome" id="homeBtn" type="button" style="margin-top:12px;"></button>
+      </div>
+
+      <!-- STATS -->
+      <div id="screenStats" class="hidden">
+        <div class="top-pill"><span class="dot"></span><span id="statsPill"></span></div>
+        <h1 style="font-size:20px; margin:0 0 8px;" id="statsTitle"></h1>
+        <p class="sub" id="statsSub"></p>
+
+        <div class="coach" id="weekBox" style="white-space:pre-line;">Laddar…</div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="secondary" data-action="backHome" id="statsBackBtn" type="button"></button>
+          <button class="secondary" data-action="resetData" id="resetDataBtn" type="button"></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modalOverlay" id="settingsOverlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modalHeader">
+        <div>
+          <div class="top-pill" style="margin:0;"><span class="dot"></span><span id="settingsPill"></span></div>
+          <h1 id="settingsTitle" style="font-size:20px; margin:10px 0 6px;"></h1>
+          <p class="sub" id="settingsSub" style="margin:0;"></p>
+        </div>
+        <button class="xbtn" data-action="closeSettings" type="button">✕</button>
+      </div>
+
+      <div class="section-title" id="langTitle"></div>
+      <div class="langRow">
+        <button class="langBtn" data-action="pickLang" data-lang="sv" type="button">Svenska</button>
+        <button class="langBtn" data-action="pickLang" data-lang="en" type="button">English</button>
+      </div>
+
+      <div class="section-title" id="settingsPurposeTitle"></div>
+      <div class="purposeCards" style="margin-top:6px;">
+        <button class="purposeCard" data-action="pickPurpose" data-purpose="scroll" type="button"><strong id="sp_scroll">Scroll</strong></button>
+        <button class="purposeCard" data-action="pickPurpose" data-purpose="stress" type="button"><strong id="sp_stress">Stress</strong></button>
+        <button class="purposeCard" data-action="pickPurpose" data-purpose="adhd" type="button"><strong id="sp_adhd">ADHD</strong></button>
+        <button class="purposeCard" data-action="pickPurpose" data-purpose="school" type="button"><strong id="sp_school">Skola</strong></button>
+      </div>
+
+      <button class="bigbtn" data-action="saveSettings" type="button" id="saveSettingsBtn"></button>
+    </div>
+  </div>
+
+  <!-- OTHER MODAL -->
+  <div class="modalOverlay" id="otherOverlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modalHeader">
+        <div>
+          <div class="top-pill" style="margin:0;"><span class="dot"></span><span id="otherPill"></span></div>
+          <h1 id="otherTitle" style="font-size:20px; margin:10px 0 6px;"></h1>
+          <p class="sub" id="otherSub" style="margin:0;"></p>
+        </div>
+        <button class="xbtn" data-action="closeOther" type="button">✕</button>
+      </div>
+
+      <div class="list" id="otherList"></div>
+      <button class="secondary" data-action="closeOther" type="button" style="margin-top:12px;" id="otherCloseBtn"></button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
