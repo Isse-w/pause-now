@@ -1,42 +1,50 @@
-const CACHE = "pause-now-v6";
+const CACHE_NAME = "pause-now-v1-final-3";
 
 const ASSETS = [
   "./",
   "index.html",
+  "styles.css",
   "app.js",
   "manifest.json",
   "icons/icon-192.png",
   "icons/icon-512.png",
 
-  "sounds/rain.mp3",
+  // Ambient
   "sounds/birds.mp3",
+  "sounds/rain.mp3",
   "sounds/fire.mp3",
+  "sounds/ocean.mp3",
 
-  "sounds/coach_scroll.mp3",
-  "sounds/coach_scroll_en.mp3",
-  "sounds/coach_stress.mp3",
-  "sounds/coach_stress_en.mp3",
-  "sounds/coach_adhd.mp3",
-  "sounds/coach_adhd_en.mp3",
-  "sounds/coach_school.mp3",
-  "sounds/coach_school_en.mp3",
-
-  "sounds/sv_ready.mp3",
+  // Cues SV
+  "sounds/ready_sv.mp3",
   "sounds/sv_in.mp3",
   "sounds/sv_hold.mp3",
   "sounds/sv_out.mp3",
-  "sounds/sv_done.mp3",
+  "sounds/done_sv.mp3",
 
-  "sounds/en_ready.mp3",
+  // Cues EN
+  "sounds/ready_en.mp3",
   "sounds/en_in.mp3",
   "sounds/en_hold.mp3",
   "sounds/en_out.mp3",
-  "sounds/en_done.mp3"
+  "sounds/done_en.mp3",
+
+  // Purpose SV
+  "sounds/purpose_scroll_sv.mp3",
+  "sounds/purpose_stress_sv.mp3",
+  "sounds/purpose_adhd_sv.mp3",
+  "sounds/purpose_school_sv.mp3",
+
+  // Purpose EN
+  "sounds/purpose_scroll_en.mp3",
+  "sounds/purpose_stress_en.mp3",
+  "sounds/purpose_adhd_en.mp3",
+  "sounds/purpose_school_en.mp3"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE)
+    caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
@@ -45,7 +53,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k === CACHE ? null : caches.delete(k))))
+      Promise.all(keys.map(k => (k === CACHE_NAME ? null : caches.delete(k))))
     ).then(() => self.clients.claim())
   );
 });
@@ -58,22 +66,9 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
       return fetch(event.request).then((res) => {
         const copy = res.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy)).catch(()=>{});
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(()=>{});
         return res;
       }).catch(() => cached);
-    })
-  );
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || "./";
-  event.waitUntil(
-    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
-      for (const client of clients) {
-        if (client.url.includes(url) && "focus" in client) return client.focus();
-      }
-      if (self.clients.openWindow) return self.clients.openWindow(url);
     })
   );
 });
